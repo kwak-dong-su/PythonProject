@@ -1,0 +1,3 @@
+I am hungry
+I am a programmer
+I love python
