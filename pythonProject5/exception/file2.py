@@ -2,10 +2,11 @@
 try:
     file2 = open('member.txt', 'r')
 
-    print('이름  나이  연락처')
-    print('----------------')
+    print('이름 \t 나이 \t 연락처')
+    print('-----------------------')
     for line in file2:
-        print(line)
+        one=line.split(',')
+        print(one[0]+"\t"+one[1]+"\t"+one[2],end='')
 except:
     print('파일 쓰기 실패')
 finally:
