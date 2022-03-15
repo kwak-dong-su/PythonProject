@@ -6,7 +6,7 @@ from product_API import *
 
 def find():
     product_list = []
-    for i in range(1, 128, 10):
+    for i in range(1, 128):
         path = './KoreanEnglishman/scene (' + str(i) + ').png'
         detection_result = detect_product(path)
         product_list.append(detection_result)
@@ -25,7 +25,7 @@ def find():
     print(p_count_list)
 
     multitag_list = []
-    for i in range(1, 128, 10):
+    for i in range(1, 128):
         path = './KoreanEnglishman/scene (' + str(i) + ').png'
         label_result = multi_tag(path)
         multitag_list.append(label_result)
@@ -57,7 +57,7 @@ def find():
     lb.config(text=p_g.get())
     pb.update()
 
-    img = PhotoImage(file='./KoreanEnglishman/scene ('+str(max_index)+').png')
+    img = PhotoImage(file='./KoreanEnglishman/scene ('+str(max_index+1)+').png')
     result2.configure(image=img)
     result2.image = img
 

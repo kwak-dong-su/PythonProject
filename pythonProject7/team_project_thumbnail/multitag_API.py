@@ -9,7 +9,7 @@ from io import BytesIO
 
 API_URL = 'https://dapi.kakao.com/v2/vision/multitag/generate'
 # API_URL = 'https://dapi.kakao.com/v2/vision/face/detect'
-MYAPP_KEY = 'b9ca7e6fcb8da3719636ca6542de8a8a'
+MYAPP_KEY = 'a7b67eb75e39a57c2ef640b5fffb81dd'
 
 def multi_tag(img):
     file = {'image': open(img, 'rb')}
