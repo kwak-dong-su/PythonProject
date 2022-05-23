@@ -1,0 +1,23 @@
+from django.http import HttpResponse
+from django.shortcuts import render
+
+# Create your views here.
+import bbs.models
+
+
+def start(request):
+    return render(request, 'bbs/start.html')
+
+def insert(request):
+    return render(request, 'bbs/insert.html')
+
+def insert2(request):
+    # post 방식으로 전달된 데이터를 받아야 한다.
+    data=request.POST
+    print(data)
+
+    # 객체 생성해서 save() 호출
+    one=bbs.models.Bbs(no=data['no'], title=data['title'], content=data['content'], writer=data['writer'])
+    one.save()
+
+    return HttpResponse('ok')
