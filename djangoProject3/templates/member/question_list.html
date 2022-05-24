@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 문의 게시판</title>
+    <style>
+        table{
+            text-align: center;
+        }
+        tr:nth-child(1){
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+{# template 언어 #}
+<table border="1">
+<tr>
+    <td>번호</td>
+    <td>내용</td>
+    <td>작성일</td>
+    <td>작성자</td>
+    <td>수정/삭제</td>
+</tr>
+{% for one in list %}
+        <tr>
+            <td width="200">{{ one.id }}</td>
+            <td width="200">{{ one.question_text }}</td>
+            <td width="200">{{ one.pub_date }}</td>
+            <td width="200">{{ one.question_writer }}</td>
+            <td>
+                {% if request.session.name == one.question_writer  %}
+                    <a href="/member/update_question/{{ one.id }}"><button>수정</button></a> /
+                    <a href="/member/delete_question/{{ one.id }}"><button>삭제</button></a>
+                {% endif %}
+            </td>
+        </tr>
+{% endfor %}
+</table>
+<p></p>
+{% if request.session.id != None %}
+    <a href="/member/insert_question/{{ request.session.name }}"><button>상품 문의</button></a>
+{% endif %}
+</body>
+</html>

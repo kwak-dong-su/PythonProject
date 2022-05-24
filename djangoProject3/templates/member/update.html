@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>정보 수정</title>
+    <style>
+        table{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<h3>정보 수정</h3>
+<form action="/member/update2" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="{{ one.id }}">
+    <table border="1">
+        <tr>
+            <td width="100">이름</td>
+            <td width="200">
+                <input type="text" name="name" value="{{ one.name }}">
+            </td>
+        </tr>
+        <tr>
+            <td width="100">전화번호</td>
+            <td width="200">
+                <input type="text" name="tel" value="{{ one.tel }}">
+            </td>
+        </tr>
+        <tr>
+            <td width="100">주소</td>
+            <td width="200">
+                <input type="text" name="addr" value="{{ one.addr }}">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button>수정</button>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

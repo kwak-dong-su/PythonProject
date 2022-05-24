@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 문의</title>
+    <style>
+        table{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<h3>상품 문의</h3>
+<form action="/member/insert_question2" method="post">
+    {% csrf_token %}
+    <table border="1">
+        <tr>
+            <td width="100">문의 내용</td>
+            <td width="200">
+                <textarea name="question_text">{{ one.question_text }}</textarea>
+            </td>
+        </tr>
+        <tr>
+            <td width="100">작성자</td>
+            <td width="200">
+                {{request.session.name}}
+                <input type="hidden" name="question_writer" value="{{request.session.name}}">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button>문의</button>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>
