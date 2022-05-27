@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {# chart.js cdn #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
     <title>리뷰 감정 AI 분석 게시판</title>
     {% load static %} {# 이미지 불러오기 위한 코드 #}
     {# <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}"> 부트스트랩 #}
@@ -63,15 +65,85 @@
 <p></p>
 <table border="1">
     <tr>
-        <td width="100">
+        <td width="200">
+            긍정 / 부정 비율
+        </td>
+        <td width="200">
             키워드 분석 워드 클라우드
         </td>
     </tr>
     <tr>
+        <td width="320" height="320">
+            <div style="width: 300px; height: 300px;">
+	            <canvas id="myChart"></canvas>
+            </div>
+        </td>
         <td width="100">
-            <img src="/static/img/{{ review_place_name }}.png">
+            <img src="/static/img/{{ review_place_name }}.png" onerror="this.style.display='none'"> {# 이미지 없을시 표시x #}
         </td>
     </tr>
 </table>
 </body>
+<script>
+     var context = document
+                .getElementById('myChart')
+                .getContext('2d');
+            var myChart = new Chart(context, {
+                type: 'doughnut', // 차트의 형태
+                data: { // 차트에 들어갈 데이터
+                    labels: [
+                        //x 축
+                        '긍정', '부정'
+                    ],
+                    datasets: [
+                        { //데이터
+                            label: 'test1', //차트 제목
+                            fill: false, // line 형태일 때, 선 안쪽을 채우는지 안채우는지
+                            data: [
+                                {{ pos }},{{ neg }} //x축 label에 대응되는 데이터 값
+                            ],
+                            backgroundColor: [
+                                //색상
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                //경계선 색상
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1 //경계선 굵기
+                        }/* ,
+                        {
+                            label: 'test2',
+                            fill: false,
+                            data: [
+                                8, 34, 12, 24
+                            ],
+                            backgroundColor: 'rgb(157, 109, 12)',
+                            borderColor: 'rgb(157, 109, 12)'
+                        } */
+                    ]
+                },
+                {% comment %}options: {
+                    scales: {
+                        yAxes: [
+                            {
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }
+                        ]
+                    }
+                }{% endcomment %}
+            });
+</script>
 </html>

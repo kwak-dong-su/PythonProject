@@ -15,7 +15,9 @@ def reviewList(request, review_place_name, member_name):
     result = {
         'review_place_name': review_place_name,
         'member_name': member_name,
-        'list': review.objects.filter(review_place_name=review_place_name).order_by('-id')
+        'list': review.objects.filter(review_place_name=review_place_name).order_by('-id'),
+        'pos': review.objects.filter(review_place_name=review_place_name, review_pos_neg=1).count(),
+        'neg': review.objects.filter(review_place_name=review_place_name, review_pos_neg=2).count()
     }
     return render(request, 'placeReview/reviewList.html', result)
 
