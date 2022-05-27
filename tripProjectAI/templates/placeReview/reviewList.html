@@ -16,7 +16,6 @@
 </head>
 <body>
 <h2>리뷰 감정 AI 분석 게시판</h2>
-<h5>{{ review_place_name }} 리뷰</h5>
 {# template 언어 #}
 {% if member_name != '0' %}
     <form action="/placeReview/insertReview" method="post">
@@ -26,7 +25,7 @@
         <input type="hidden" name="review_place_name" value="{{ review_place_name }}">
         <tr>
             <td width="500" height="10">
-                <textarea style="width: 450px; height: 30px;" name="review_content" placeholder="내용"></textarea>
+                <input style="width: 450px; height: 20px;" name="review_content" placeholder="{{ review_place_name }}에 대한 리뷰 쓰기">
             </td>
             <td><button>작성</button></td>
         </tr>
