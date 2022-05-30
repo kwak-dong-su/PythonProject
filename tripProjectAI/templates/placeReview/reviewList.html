@@ -2,39 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>리뷰 감정 AI 분석 게시판</title>
+    {# chart.js cdn #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    {# jQuery #}
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.min.js"></script>
+    {# jQCloud #}
+    <script src="/static/js/jqcloud-1.0.4.js"></script>
+    {# jQCloud CSS #}
+    <link rel="stylesheet" href="/static/css/jqcloud.css">
+
+    <title>AI 감정 분석 리뷰 게시판</title>
     {% load static %} {# 이미지 불러오기 위한 코드 #}
     {# <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}"> 부트스트랩 #}
     <style>
         table{
             text-align: center;
+            margin: auto;
         }
         tr:nth-child(1){
             font-weight: bold;
         }
+        div{
+            text-align: center;
+            margin: 5px;
+        }
+
+        {#워드클라우드 CSS#}
+
+        #myWordCloud{
+            width:80%;
+        }
+
+        div.jqcloud span.vertical {
+            -webkit-writing-mode: vertical-rl;
+            writing-mode: tb-rl;
+      }
+        div.jqcloud span.pos_word {
+            color: deepskyblue;
+      }
+         div.jqcloud span.neg_word {
+            color: red;
+      }
     </style>
 </head>
 <body>
-<h2>리뷰 감정 AI 분석 게시판</h2>
-<h5>{{ review_place_name }} 리뷰</h5>
+<div>
+<h2>AI 감정 분석 리뷰 게시판</h2>
+<br>
 {# template 언어 #}
-{% if member_name != '0' %}
-    <form action="/placeReview/insertReview" method="post">
-    {% csrf_token %}
-    <table border="1">
-        <input type="hidden" name="review_writer" value="{{ member_name }}">
-        <input type="hidden" name="review_place_name" value="{{ review_place_name }}">
-        <tr>
-            <td width="500" height="10">
-                <textarea style="width: 450px; height: 30px;" name="review_content" placeholder="내용"></textarea>
-            </td>
-            <td><button>작성</button></td>
-        </tr>
-    </table>
-</form>
-{% else %}
-{% endif %}
-<p></p>
 <table border="1">
 <tr>
     <td>번호</td>
@@ -47,32 +62,329 @@
         <tr>
             <td width="50">{{ one.id }}</td>
             {% if one.review_pos_neg == 1 %}
-                <td width="100" style="color: deepskyblue">긍정</td>
+                <td width="70" style="color: deepskyblue">긍정</td>
             {% else %}
-                <td width="100" style="color: red">부정</td>
+                <td width="70" style="color: red">부정</td>
             {% endif %}
             <td style="width: 300px; text-align: left;" >&nbsp;{{ one.review_content }}</td>
-            <td width="100">{{ one.review_writer }}</td>
-            <td>
+            <td width="80">{{ one.review_writer }}</td>
+            <td width="43" height="24">
                 {% if member_name == one.review_writer  %}
-                    <a href="/placeReview/deleteReview/{{ review_place_name }}/{{ one.id }}/{{ one.review_writer }}"><button>삭제</button></a>
+                    <a href="/placeReview/deleteReview/{{ review_place_name }}/{{ one.id }}/{{ one.review_writer }}/{{ page }}"><button>삭제</button></a>
                 {% endif %}
             </td>
         </tr>
 {% endfor %}
+{% for i in empty  %}
+    <tr>
+            <td width="50"></td>
+            <td width="70" style="color: deepskyblue"></td>
+            <td style="width: 300px; text-align: left;" >&nbsp;</td>
+            <td width="80"></td>
+            <td width="43" height="24"></td>
+        </tr>
+{% endfor %}
 </table>
-<p></p>
+<div></div>
+<table border="0">
+    <tr>
+        <td>
+            <button id="previousPage">< 이전</button>
+        </td>
+        <td width="50">
+            {{ page }} / {{ totalPage }}
+        </td>
+        <td>
+            <button id="nextPage">다음 ></button>
+        </td>
+    </tr>
+</table>
+<div></div>
+{% if member_name != '0' %}
+    <form action="/placeReview/insertReview" method="post">
+    {% csrf_token %}
+    <table border="1">
+        <input type="hidden" name="review_writer" value="{{ member_name }}">
+        <input type="hidden" name="review_place_name" value="{{ review_place_name }}">
+        <tr>
+            <td width="500" height="10">
+                <input style="width: 450px; height: 20px;" name="review_content" id="review_content" placeholder="{{ review_place_name }}에 대한 리뷰 쓰기">
+            </td>
+            <td><button>작성</button></td>
+        </tr>
+    </table>
+</form>
+{% else %}
+{% endif %}
+<br>
+
 <table border="1">
     <tr>
-        <td width="100">
-            키워드 분석 워드 클라우드
+        <td width="200">
+            긍정 / 부정 비율
+        </td>
+        <td width="200">
+            키워드 분석
         </td>
     </tr>
     <tr>
-        <td width="100">
-            <img src="/static/img/{{ review_place_name }}.png">
+        <td width="320" height="320">
+            <div style="width: 350px; height: 350px;">
+	            <canvas id="myChart"></canvas>
+            </div>
         </td>
+        <td width="100">
+            <div id="myWordCloud" style="width: 380px; height: 380px;"></div>
+        </td>
+{#        <td width="100">#}
+{#            <img src="/static/img/{{ review_place_name }}.png" onerror="this.style.display='none'"> {# 이미지 없을시 표시x #}
+{#        </td>#}
     </tr>
 </table>
+<p></p>
+<a href="http://localhost:8080/trip/main.jsp"><button>나가기 ></button></a>
+</div>
 </body>
+<script>
+    Chart.pluginService.register({
+  beforeDraw: function(chart) {
+    if (chart.config.options.elements.center) {
+      // Get ctx from string
+      var ctx = chart.chart.ctx;
+
+      // Get options from the center object in options
+      var centerConfig = chart.config.options.elements.center;
+      var fontStyle = centerConfig.fontStyle || 'Arial';
+      var txt = centerConfig.text;
+      var color = centerConfig.color || '#000';
+      var maxFontSize = centerConfig.maxFontSize || 75;
+      var sidePadding = centerConfig.sidePadding || 20;
+      var sidePaddingCalculated = (sidePadding / 100) * (chart.innerRadius * 2)
+      // Start with a base font of 30px
+      ctx.font = "30px " + fontStyle;
+
+      // Get the width of the string and also the width of the element minus 10 to give it 5px side padding
+      var stringWidth = ctx.measureText(txt).width;
+      var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
+
+      // Find out how much the font can grow in width.
+      var widthRatio = elementWidth / stringWidth;
+      var newFontSize = Math.floor(30 * widthRatio);
+      var elementHeight = (chart.innerRadius * 2);
+
+      // Pick a new font size so it will not be larger than the height of label.
+      var fontSizeToUse = Math.min(newFontSize, elementHeight, maxFontSize);
+      var minFontSize = centerConfig.minFontSize;
+      var lineHeight = centerConfig.lineHeight || 25;
+      var wrapText = false;
+
+      if (minFontSize === undefined) {
+        minFontSize = 20;
+      }
+
+      if (minFontSize && fontSizeToUse < minFontSize) {
+        fontSizeToUse = minFontSize;
+        wrapText = true;
+      }
+
+      // Set font settings to draw it correctly.
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
+      var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
+      ctx.font = fontSizeToUse + "px " + fontStyle;
+      ctx.fillStyle = color;
+
+      if (!wrapText) {
+        ctx.fillText(txt, centerX, centerY);
+        return;
+      }
+
+      var words = txt.split(' ');
+      var line = '';
+      var lines = [];
+
+      // Break words up into multiple lines if necessary
+      for (var n = 0; n < words.length; n++) {
+        var testLine = line + words[n] + ' ';
+        var metrics = ctx.measureText(testLine);
+        var testWidth = metrics.width;
+        if (testWidth > elementWidth && n > 0) {
+          lines.push(line);
+          line = words[n] + ' ';
+        } else {
+          line = testLine;
+        }
+      }
+
+      // Move the center up depending on line height and number of lines
+      centerY -= (lines.length / 2) * lineHeight;
+
+      for (var n = 0; n < lines.length; n++) {
+        ctx.fillText(lines[n], centerX, centerY);
+        centerY += lineHeight;
+      }
+      //Draw text in center
+      ctx.fillText(line, centerX, centerY);
+    }
+  }
+}); {# doughnut chart에 text를 입력하기 위한 코드 #}
+
+    var posOrNeg='';
+    var percentage=0;
+    var percentageColor='';
+    if({{ pos }}>{{ neg }})
+    {
+        posOrNeg='% 긍정'
+        percentage=({{ pos }}/({{ pos }}+{{ neg }})*100).toFixed(1); {# 소수점 1자리까지만 반올림 후 return #}
+        percentageColor='deepskyblue';
+    }
+    else
+    {
+        posOrNeg='% 부정'
+        percentage=({{ neg }}/({{ pos }}+{{ neg }})*100).toFixed(1);
+        percentageColor='red';
+    } {# 비율 계산하는 코드, 긍정이 우세하면 긍정+deepskyblue 컬러, 아닐 시 부정+red 컬러 #}
+
+    if(percentage==100.0)
+        {
+            percentage=100
+        }
+    else if(percentage=='NaN')
+        {
+            percentage='리뷰 없음'
+            posOrNeg=''
+            percentageColor='darkgray';
+        } {# 100.0% 일시 소수점 버림, NaN일시 darkgray로 시각화  #}
+
+     var context = document
+                .getElementById('myChart')
+                .getContext('2d');
+            var myChart = new Chart(context, {
+                type: 'doughnut', // 차트의 형태
+                data: { // 차트에 들어갈 데이터
+                    labels: [
+                        //x 축
+                        '긍정', '부정'
+                    ],
+                    datasets: [
+                        { //데이터
+                            label: '긍정 부정 비율', //차트 제목
+                            fill: false, // line 형태일 때, 선 안쪽을 채우는지 안채우는지
+                            data: [
+                                {{ pos }}, {{ neg }} //x축 label에 대응되는 데이터 값
+                            ],
+                            backgroundColor: [
+                                //색상
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                //경계선 색상
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1 //경계선 굵기
+                        }/* ,
+                        {
+                           label: 'test2',
+                           fill: false,
+                           data: [
+                               8, 34, 12, 24
+                           ],
+                           backgroundColor: 'rgb(157, 109, 12)',
+                           borderColor: 'rgb(157, 109, 12)'
+                        } */
+                    ]
+                },
+                options: {
+                  elements: {
+                    center: {
+                      text: percentage+posOrNeg,
+                      color: percentageColor, // Default is #000000
+                      fontStyle: '', // Default is Arial
+                      sidePadding: 20, // Default is 20 (as a percentage)
+                      minFontSize: 20, // Default is 20 (in px), set to false and text will not wrap.
+                      lineHeight: 10 // Default is 25 (in px), used for when text wraps
+                    }
+                  }
+                } {# doughnut chart에 text를 입력하기 위한 코드 #}
+
+                {% comment %}options: {
+                    scales: {
+                        yAxes: [
+                            {
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }
+                        ]
+                    }
+                }{% endcomment %}
+            });
+    if('{{ member_name }}'!=0)
+    {
+        document.getElementById("review_content").focus(); {# 기본적으로 리뷰 입력창을 focus(로그인 된 상태에서만) #}
+    }
+
+    $(function(){
+        var page={{ page }}
+        var totalPage={{ totalPage }}
+        $("#previousPage").click(function (){
+            console.log('이전 페이지 클릭')
+            if(page>1)
+            {
+                page=page-1
+                location.href='/placeReview/reviewList/{{ review_place_name }}/{{ member_name }}/'+page
+            }
+        })
+
+        $("#nextPage").click(function (){
+            console.log('다음 페이지 클릭')
+            if(page<totalPage)
+            {
+                page=page+1
+                location.href='/placeReview/reviewList/{{ review_place_name }}/{{ member_name }}/'+page
+            }
+        })
+
+        {#워드 클라우드 생성을 위한 단어 list와 가중치 #}
+        var word_list = [
+            {text: "{{topWord.0}}", weight: 28, html: {"class": "{{posOrNeg.0}}"}},
+            {text: "{{topWord.1}}", weight: 25, html: {"class": "{{posOrNeg.1}} vertical"}},
+            {text: "{{topWord.2}}", weight: 24, html: {"class": "{{posOrNeg.2}}"}},
+            {text: "{{topWord.3}}", weight: 20, html: {"class": "{{posOrNeg.3}} vertical"}},
+            {text: "{{topWord.4}}", weight: 15, html: {"class": "{{posOrNeg.4}}"}},
+            {text: "{{topWord.5}}", weight: 14, html: {"class": "{{posOrNeg.5}}"}},
+            {text: "{{topWord.6}}", weight: 8, html: {"class": "{{posOrNeg.6}} vertical"}},
+            {text: "{{topWord.7}}", weight: 3, html: {"class": "{{posOrNeg.7}}"}},
+        ]
+        {# 워드 클라우드 생성 #}
+        $("#myWordCloud").jQCloud(word_list, {
+            classPattern: null,
+            colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"],
+            fontSize: {
+                from: 0.1,
+                to: 0.02
+              }
+        })
+    })
+
+    {# topWord를 콘솔창에 출력 #}
+    console.log("{{ topWord }}")
+    {# posOrNeg를 콘솔창에 출력 #}
+    console.log("{{ posOrNeg }}")
+
+{#    {% for one in topWord %}#}
+{#         console.log("{{ one }}")#}
+{#    {% endfor %}#}
+</script>
 </html>
