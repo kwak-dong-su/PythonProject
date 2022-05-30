@@ -4,7 +4,10 @@ from django.shortcuts import render, redirect
 from django.shortcuts import render
 from placeReview.models import review
 from ML.tripReviewML import ML
+<<<<<<< HEAD
 from ML.NLP import NLP
+=======
+>>>>>>> a4dd04e6cc2b279de64c8fc7ad6f96536f1bb6ff
 
 def main(request):
     return render(request, 'placeReview/main.html')
@@ -26,6 +29,7 @@ def reviewList(request, review_place_name, member_name, page):
     result = {
         'review_place_name': review_place_name,
         'member_name': member_name,
+<<<<<<< HEAD
         'list': review.objects.filter(review_place_name=review_place_name).order_by('-id')[index:index+5], # 시작 인덱스부터 5개 가져옴
         'empty': empty,
         'pos': review.objects.filter(review_place_name=review_place_name, review_pos_neg=1).count(),
@@ -34,13 +38,22 @@ def reviewList(request, review_place_name, member_name, page):
         'totalPage': int((review.objects.filter(review_place_name=review_place_name).count()-1)/5)+1, # 총 페이지 개수
         'topWord': topWord, # 빈도수 n위까지의 list
         'posOrNeg': posOrNeg # jQCloud의 색상 지정을 위한 긍정 부정 구분 list
+=======
+        'list': review.objects.filter(review_place_name=review_place_name).order_by('-id'),
+        'pos': review.objects.filter(review_place_name=review_place_name, review_pos_neg=1).count(),
+        'neg': review.objects.filter(review_place_name=review_place_name, review_pos_neg=2).count()
+>>>>>>> a4dd04e6cc2b279de64c8fc7ad6f96536f1bb6ff
     }
     return render(request, 'placeReview/reviewList.html', result)
 
 def insertReview(request):
     data=request.POST
     print(data)
+<<<<<<< HEAD
     ml=ML() #감정 분석을 위한 객체
+=======
+    ml=ML()
+>>>>>>> a4dd04e6cc2b279de64c8fc7ad6f96536f1bb6ff
     pos_neg=ml.predict(data['review_content']) # 딥러닝 모델 불러와서 감정 분석 후 결과값 넣기
     one = review(review_place_name=data['review_place_name'], review_pos_neg=pos_neg, review_content=data['review_content'], review_writer=data['review_writer'])
     one.save()
