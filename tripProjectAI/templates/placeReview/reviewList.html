@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     {# chart.js cdn #}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-<<<<<<< HEAD
     {# jQuery #}
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.min.js"></script>
     {# jQCloud #}
@@ -13,9 +12,6 @@
     <link rel="stylesheet" href="/static/css/jqcloud.css">
 
     <title>AI 감정 분석 리뷰 게시판</title>
-=======
-    <title>리뷰 감정 AI 분석 게시판</title>
->>>>>>> a4dd04e6cc2b279de64c8fc7ad6f96536f1bb6ff
     {% load static %} {# 이미지 불러오기 위한 코드 #}
     {# <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}"> 부트스트랩 #}
     <style>
@@ -50,32 +46,10 @@
     </style>
 </head>
 <body>
-<<<<<<< HEAD
 <div>
 <h2>AI 감정 분석 리뷰 게시판</h2>
 <br>
 {# template 언어 #}
-=======
-<h2>리뷰 감정 AI 분석 게시판</h2>
-{# template 언어 #}
-{% if member_name != '0' %}
-    <form action="/placeReview/insertReview" method="post">
-    {% csrf_token %}
-    <table border="1">
-        <input type="hidden" name="review_writer" value="{{ member_name }}">
-        <input type="hidden" name="review_place_name" value="{{ review_place_name }}">
-        <tr>
-            <td width="500" height="10">
-                <input style="width: 450px; height: 20px;" name="review_content" placeholder="{{ review_place_name }}에 대한 리뷰 쓰기">
-            </td>
-            <td><button>작성</button></td>
-        </tr>
-    </table>
-</form>
-{% else %}
-{% endif %}
-<p></p>
->>>>>>> a4dd04e6cc2b279de64c8fc7ad6f96536f1bb6ff
 <table border="1">
 <tr>
     <td>번호</td>
@@ -150,27 +124,14 @@
             긍정 / 부정 비율
         </td>
         <td width="200">
-<<<<<<< HEAD
             키워드 분석
-=======
-            키워드 분석 워드 클라우드
->>>>>>> a4dd04e6cc2b279de64c8fc7ad6f96536f1bb6ff
         </td>
     </tr>
     <tr>
         <td width="320" height="320">
-<<<<<<< HEAD
             <div style="width: 350px; height: 350px;">
 	            <canvas id="myChart"></canvas>
             </div>
-=======
-            <div style="width: 300px; height: 300px;">
-	            <canvas id="myChart"></canvas>
-            </div>
-        </td>
-        <td width="100">
-            <img src="/static/img/{{ review_place_name }}.png" onerror="this.style.display='none'"> {# 이미지 없을시 표시x #}
->>>>>>> a4dd04e6cc2b279de64c8fc7ad6f96536f1bb6ff
         </td>
         <td width="100">
             <div id="myWordCloud" style="width: 380px; height: 380px;"></div>
@@ -181,11 +142,10 @@
     </tr>
 </table>
 <p></p>
-<a href="http://localhost:8080/trip/main.jsp"><button>나가기 ></button></a>
+<a href="http://localhost:8080/trip/main.jsp"><button>나가기></button></a>
 </div>
 </body>
 <script>
-<<<<<<< HEAD
     Chart.pluginService.register({
   beforeDraw: function(chart) {
     if (chart.config.options.elements.center) {
@@ -297,8 +257,6 @@
             percentageColor='darkgray';
         } {# 100.0% 일시 소수점 버림, NaN일시 darkgray로 시각화  #}
 
-=======
->>>>>>> a4dd04e6cc2b279de64c8fc7ad6f96536f1bb6ff
      var context = document
                 .getElementById('myChart')
                 .getContext('2d');
@@ -311,17 +269,10 @@
                     ],
                     datasets: [
                         { //데이터
-<<<<<<< HEAD
                             label: '긍정 부정 비율', //차트 제목
                             fill: false, // line 형태일 때, 선 안쪽을 채우는지 안채우는지
                             data: [
                                 {{ pos }}, {{ neg }} //x축 label에 대응되는 데이터 값
-=======
-                            label: 'test1', //차트 제목
-                            fill: false, // line 형태일 때, 선 안쪽을 채우는지 안채우는지
-                            data: [
-                                {{ pos }},{{ neg }} //x축 label에 대응되는 데이터 값
->>>>>>> a4dd04e6cc2b279de64c8fc7ad6f96536f1bb6ff
                             ],
                             backgroundColor: [
                                 //색상
@@ -344,7 +295,6 @@
                             borderWidth: 1 //경계선 굵기
                         }/* ,
                         {
-<<<<<<< HEAD
                            label: 'test2',
                            fill: false,
                            data: [
@@ -368,18 +318,6 @@
                   }
                 } {# doughnut chart에 text를 입력하기 위한 코드 #}
 
-=======
-                            label: 'test2',
-                            fill: false,
-                            data: [
-                                8, 34, 12, 24
-                            ],
-                            backgroundColor: 'rgb(157, 109, 12)',
-                            borderColor: 'rgb(157, 109, 12)'
-                        } */
-                    ]
-                },
->>>>>>> a4dd04e6cc2b279de64c8fc7ad6f96536f1bb6ff
                 {% comment %}options: {
                     scales: {
                         yAxes: [
@@ -392,7 +330,6 @@
                     }
                 }{% endcomment %}
             });
-<<<<<<< HEAD
     if('{{ member_name }}'!=0)
     {
         document.getElementById("review_content").focus(); {# 기본적으로 리뷰 입력창을 focus(로그인 된 상태에서만) #}
@@ -449,7 +386,5 @@
 {#    {% for one in topWord %}#}
 {#         console.log("{{ one }}")#}
 {#    {% endfor %}#}
-=======
->>>>>>> a4dd04e6cc2b279de64c8fc7ad6f96536f1bb6ff
 </script>
 </html>
