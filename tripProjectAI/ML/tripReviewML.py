@@ -6,7 +6,7 @@ import re
 class ML:
     trip_review_SA_lr = joblib.load(os.path.abspath('ML/trip_review_SA_lr.pkl'))
     trip_review_tfidf = joblib.load(os.path.abspath('ML/trip_review_tfidf.pkl'))
-    # 다른 곳에어 import하기 위해 절대 경로로 불러와 줌
+    # 다른 곳에서 import하기 위해 절대 경로로 불러와 줌
 
     def predict(self, str):
         str=re.sub(r'[^ ㄱ-ㅎ|가-힣]+', "", str)
@@ -21,3 +21,4 @@ class ML:
         else:
             print('긍정')
             return 1
+
